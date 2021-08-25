@@ -58,14 +58,14 @@ fun ClockWidget(dateTime: DateTimeEntity, modifier: Modifier) {
             val piX2 = PI * 2
             val piX2b4 = piX2 / 4f
 
-            val minuteHandLength = ((radius / 2) - 3).dp.toPx()
+            val minuteHandLength = radius - 3.dp.toPx()
             val minuteAngle = (piX2 * (dateTime.min / 60.0f)) - piX2b4
             val minuteHand = Offset(
                 x = (center.x + cos(minuteAngle) * minuteHandLength).toFloat(),
                 y = (center.y + sin(minuteAngle) * minuteHandLength).toFloat()
             )
 
-            val hourHandLength = ((radius / 2) - 8).dp.toPx()
+            val hourHandLength = radius - 8.dp.toPx()
             val hourAngle =
                 (piX2 * ((dateTime.hour * 5 + (dateTime.min / 60.0f) * 5) / 60.0f)) - piX2b4
             val hourHand = Offset(
