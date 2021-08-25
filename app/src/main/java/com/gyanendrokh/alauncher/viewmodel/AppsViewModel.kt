@@ -11,6 +11,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 class AppsViewModel(application: Application) : AndroidViewModel(application) {
+    private val featuredAppCount = 7
     var apps = mutableStateOf<List<AppEntity>>(ArrayList())
     var featuredApps = mutableStateOf<List<AppEntity>>(ArrayList())
 
@@ -32,15 +33,15 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
     private fun updateFeaturedApps() {
         val start = min(
             max(
-                (Math.random() * apps.value.size - 6).toInt(),
+                (Math.random() * apps.value.size - featuredAppCount).toInt(),
                 0
             ),
-            apps.value.size - 6
+            apps.value.size - featuredAppCount
         )
 
         featuredApps.value = apps.value.subList(
             start,
-            start + 6
+            start + featuredAppCount
         )
     }
 }
