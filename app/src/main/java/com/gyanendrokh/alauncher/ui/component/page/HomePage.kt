@@ -2,17 +2,16 @@ package com.gyanendrokh.alauncher.ui.component.page
 
 import android.os.Handler
 import android.os.Looper
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.compose.ui.unit.dp
 import com.gyanendrokh.alauncher.model.AppEntity
-import com.gyanendrokh.alauncher.ui.component.AppItemList
+import com.gyanendrokh.alauncher.ui.component.AppItem
 import com.gyanendrokh.alauncher.ui.component.BottomBar
 import com.gyanendrokh.alauncher.ui.component.ClockWidget
 import com.gyanendrokh.alauncher.util.getDateTime
@@ -42,44 +41,35 @@ fun HomePage(
         update()
     }
 
-    Box(
-        modifier = modifier.fillMaxSize()
+    Column(
+        modifier = modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        ConstraintLayout(
-            modifier = Modifier.fillMaxSize()
+        ClockWidget(
+            dateTime = dateTime.value,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Column(
+            modifier = Modifier
+                .padding(vertical = 20.dp)
+                .weight(1f)
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.SpaceAround
         ) {
-            val (topHeader, itemList, bottomBar) = createRefs()
-
-            ClockWidget(
-                dateTime = dateTime.value,
-                modifier = Modifier.constrainAs(topHeader) {
-                    start.linkTo(parent.start)
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end)
-                }
-            )
-
-            AppItemList(
-                modifier = Modifier.constrainAs(itemList) {
-                    start.linkTo(parent.start)
-                    top.linkTo(topHeader.bottom)
-                    end.linkTo(parent.end)
-                    bottom.linkTo(bottomBar.top)
-                },
-                apps = apps,
-                onItemClick = {
-                    openApp(context = context, it.packageName)
-                }
-            )
-
-            BottomBar(
-                modifier = Modifier.constrainAs(bottomBar) {
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    bottom.linkTo(parent.bottom)
-                },
-                onAppDrawerClick = onAppDrawerClick
-            )
+            apps.forEach { app ->
+                AppItem(
+                    app = app, onClick = {
+                        openApp(context = context, packageName = app.packageName)
+                    }
+                )
+            }
         }
+
+        BottomBar(
+            modifier = Modifier.fillMaxWidth(),
+            onAppDrawerClick = onAppDrawerClick
+        )
     }
 }
