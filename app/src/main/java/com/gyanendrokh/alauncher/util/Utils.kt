@@ -1,10 +1,16 @@
 package com.gyanendrokh.alauncher.util
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.LauncherApps
 import android.graphics.drawable.Drawable
 import com.gyanendrokh.alauncher.model.AppEntity
+import com.gyanendrokh.alauncher.viewmodel.DateTimeEntity
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Calendar
+import kotlin.collections.ArrayList
 
 fun createQueryIntent(): Intent {
     return Intent(Intent.ACTION_MAIN, null).apply {
@@ -63,5 +69,23 @@ fun queryAllPackages(context: Context): List<AppEntity> {
 fun openApp(context: Context, packageName: String) {
     context.startActivity(
         context.packageManager.getLaunchIntentForPackage(packageName)
+    )
+}
+
+@SuppressLint("SimpleDateFormat")
+val dateStrFormat = SimpleDateFormat("E dd MMM")
+
+@SuppressLint("SimpleDateFormat")
+val timeStrFormat = SimpleDateFormat("hh:mm a")
+
+fun getDateTime(): DateTimeEntity {
+    val date = Date()
+    val calendar = Calendar.getInstance()
+
+    return DateTimeEntity(
+        min = calendar.get(Calendar.MINUTE),
+        hour = calendar.get(Calendar.HOUR_OF_DAY),
+        dateStr = dateStrFormat.format(date),
+        timeStr = timeStrFormat.format(date)
     )
 }
