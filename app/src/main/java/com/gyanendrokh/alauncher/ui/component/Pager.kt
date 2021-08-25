@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
+import com.gyanendrokh.alauncher.MainActivity
 import com.gyanendrokh.alauncher.ui.component.page.AppsPage
 import com.gyanendrokh.alauncher.ui.component.page.HomePage
 import com.gyanendrokh.alauncher.viewmodel.AppsViewModel
@@ -25,6 +26,17 @@ fun Pager(
     )
     val apps = appsViewModel.apps.value
     val featuredApps = appsViewModel.featuredApps.value
+
+    MainActivity.setOnBackPressCallback {
+        if (pagerState.currentPage != 0) {
+            scope.launch {
+                pagerState.scrollToPage(0, 0f)
+            }
+            true
+        } else {
+            false
+        }
+    }
 
     HorizontalPager(
         modifier = modifier,
