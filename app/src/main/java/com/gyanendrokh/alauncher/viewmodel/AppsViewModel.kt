@@ -23,7 +23,7 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun updateApps() {
+    fun updateApps() {
         apps.value = queryAllPackages(
             context = getApplication<Application>().applicationContext
         ).sortedBy {
@@ -31,7 +31,7 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun updateFeaturedApps() {
+    fun updateFeaturedApps() {
         val start = min(
             max(
                 (Math.random() * apps.value.size - featuredAppCount).toInt(),
