@@ -11,6 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Launcher"
         tools:ignore="AllowBackup">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -22,6 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>
