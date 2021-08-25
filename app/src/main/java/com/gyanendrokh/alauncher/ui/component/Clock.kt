@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.sp
 import com.gyanendrokh.alauncher.viewmodel.DateTimeEntity
 import kotlin.math.PI
 import kotlin.math.cos
+import kotlin.math.min
 import kotlin.math.sin
 
 @Composable
@@ -51,21 +52,22 @@ fun ClockWidget(dateTime: DateTimeEntity, modifier: Modifier) {
 
             val color = Color.White
             val center = Offset(x = canvasWidth / 2, y = canvasHeight / 2)
-            val radius = (canvasHeight / 2).coerceAtMost(canvasWidth / 2)
+            val radius = min((canvasHeight / 2), (canvasWidth / 2))
             val style = Stroke(5f)
 
-            val minuteHandLength = ((45 / 2) - 3).dp.toPx()
-            val minuteAngle = ((PI * 2) * (dateTime.min / 60.0f)) - ((PI * 2) / 4.0f)
+            val piX2 = PI * 2
+            val piX2b4 = piX2 / 4f
+
+            val minuteHandLength = ((radius / 2) - 3).dp.toPx()
+            val minuteAngle = (piX2 * (dateTime.min / 60.0f)) - piX2b4
             val minuteHand = Offset(
                 x = (center.x + cos(minuteAngle) * minuteHandLength).toFloat(),
                 y = (center.y + sin(minuteAngle) * minuteHandLength).toFloat()
             )
 
-            val hourHandLength = ((45 / 2) - 8).dp.toPx()
-            val hourAngle = (
-                (PI * 2) * (
-                    (dateTime.hour * 5 + (dateTime.min / 60.0f) * 5) / 60.0f)
-                ) - ((PI * 2) / 4.0f)
+            val hourHandLength = ((radius / 2) - 8).dp.toPx()
+            val hourAngle =
+                (piX2 * ((dateTime.hour * 5 + (dateTime.min / 60.0f) * 5) / 60.0f)) - piX2b4
             val hourHand = Offset(
                 x = (center.x + cos(hourAngle) * hourHandLength).toFloat(),
                 y = (center.y + sin(hourAngle) * hourHandLength).toFloat()
