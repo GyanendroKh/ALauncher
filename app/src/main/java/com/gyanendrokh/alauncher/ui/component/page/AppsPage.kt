@@ -3,23 +3,43 @@ package com.gyanendrokh.alauncher.ui.component.page
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.constraintlayout.compose.ConstraintLayout
 import com.gyanendrokh.alauncher.model.AppEntity
 import com.gyanendrokh.alauncher.ui.component.AppItemList
+import com.gyanendrokh.alauncher.ui.component.AppsHeader
 import com.gyanendrokh.alauncher.util.openApp
 
 @Composable
 fun AppsPage(modifier: Modifier = Modifier, apps: List<AppEntity>) {
     val context = LocalContext.current
 
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        AppItemList(apps = apps, onItemClick = {
-            openApp(context = context, it.packageName)
-        })
+    Box(modifier = modifier.fillMaxSize()) {
+        ConstraintLayout(
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            val (header, list) = createRefs()
+
+            AppsHeader(
+                modifier = Modifier.constrainAs(header) {
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    top.linkTo(parent.top)
+                }
+            )
+
+            AppItemList(
+                modifier = Modifier.constrainAs(list) {
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    top.linkTo(header.bottom)
+                },
+                apps = apps,
+                onItemClick = {
+                    openApp(context = context, it.packageName)
+                }
+            )
+        }
     }
 }
