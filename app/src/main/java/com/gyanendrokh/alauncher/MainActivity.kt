@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.gyanendrokh.alauncher.ui.component.Pager
 import com.gyanendrokh.alauncher.ui.theme.LauncherTheme
+import com.gyanendrokh.alauncher.util.queryAllPackages
 
 @ExperimentalPagerApi
 class MainActivity : ComponentActivity() {
@@ -16,6 +17,10 @@ class MainActivity : ComponentActivity() {
             LauncherTheme {
                 Pager()
             }
+        }
+
+        queryAllPackages(this).forEach { app ->
+            println("App ${app.label} -> ${app.packageName}")
         }
     }
 }
