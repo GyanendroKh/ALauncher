@@ -59,3 +59,9 @@ fun queryAllPackages(context: Context): List<AppEntity> {
 
     return apps
 }
+
+fun openApp(context: Context, packageName: String) {
+    context.startActivity(
+        context.packageManager.getLaunchIntentForPackage(packageName)
+    )
+}
