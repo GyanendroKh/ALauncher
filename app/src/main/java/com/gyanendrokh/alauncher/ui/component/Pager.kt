@@ -18,13 +18,14 @@ fun Pager(modifier: Modifier = Modifier, appsViewModel: AppsViewModel = viewMode
         initialOffscreenLimit = 2
     )
     val apps = appsViewModel.apps.value
+    val featuredApps = appsViewModel.featuredApps.value
 
     HorizontalPager(
         modifier = modifier,
         state = pagerState
     ) { page ->
         if (page == 0) {
-            HomePage()
+            HomePage(apps = featuredApps)
         } else {
             AppsPage(apps = apps)
         }
