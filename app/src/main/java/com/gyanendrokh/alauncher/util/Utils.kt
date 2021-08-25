@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.LauncherApps
+import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import com.gyanendrokh.alauncher.model.AppEntity
 import com.gyanendrokh.alauncher.viewmodel.DateTimeEntity
@@ -88,4 +89,21 @@ fun getDateTime(): DateTimeEntity {
         dateStr = dateStrFormat.format(date),
         timeStr = timeStrFormat.format(date)
     )
+}
+
+fun isDefaultLauncher(context: Context): Boolean {
+    val packageName: String = try {
+        val info = context.packageManager.resolveActivity(
+            Intent(Intent.ACTION_MAIN).apply {
+                addCategory(Intent.CATEGORY_HOME)
+            },
+            PackageManager.MATCH_DEFAULT_ONLY
+        )
+
+        info?.activityInfo?.packageName ?: "Unknown"
+    } catch (e: Exception) {
+        "Unknown"
+    }
+
+    return packageName == context.packageName
 }

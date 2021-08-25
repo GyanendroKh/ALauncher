@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.gyanendrokh.alauncher.ui.component.Pager
 import com.gyanendrokh.alauncher.ui.theme.LauncherTheme
+import com.gyanendrokh.alauncher.util.isDefaultLauncher
 import com.gyanendrokh.alauncher.util.queryAllPackages
 
 @ExperimentalPagerApi
@@ -34,9 +35,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onBackPressed() {
         if (!onBackPressedCallBack()) {
-            {
-                // TODO: Handle
+            if (!isDefaultLauncher(this)) {
+                super.onBackPressed()
             }
+
+            // Prevent closing the app if it is the default launcher.
         }
     }
 }
