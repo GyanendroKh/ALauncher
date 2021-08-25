@@ -2,7 +2,8 @@ package com.gyanendrokh.alauncher.viewmodel
 
 import android.app.Application
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import com.gyanendrokh.alauncher.model.AppEntity
 import com.gyanendrokh.alauncher.util.queryAllPackages
 import kotlinx.coroutines.launch
@@ -12,9 +13,15 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         viewModelScope.launch {
-            apps.value = queryAllPackages(
-                context = getApplication<Application>().applicationContext
-            )
+            updateApps()
+        }
+    }
+
+    private fun updateApps() {
+        apps.value = queryAllPackages(
+            context = getApplication<Application>().applicationContext
+        ).sortedBy {
+            it.label
         }
     }
 }
