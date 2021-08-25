@@ -1,6 +1,5 @@
 package com.gyanendrokh.alauncher.ui.component
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
@@ -12,19 +11,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.core.graphics.drawable.toBitmap
 import com.gyanendrokh.alauncher.R
 
-@SuppressLint("UseCompatLoadingForDrawables")
 @Composable
-fun AppsHeader(modifier: Modifier = Modifier) {
-    val context = LocalContext.current
-
+fun AppsHeader(
+    modifier: Modifier = Modifier,
+    onStoreClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {}
+) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -55,18 +53,15 @@ fun AppsHeader(modifier: Modifier = Modifier) {
                         bottom.linkTo(parent.bottom)
                         end.linkTo(setting.start)
                     },
-                onClick = { /*TODO*/ }
+                onClick = onStoreClick
             ) {
-                context.getDrawable(R.drawable.ic_icons8_google_play)?.toBitmap()
-                    ?.asImageBitmap()?.let {
-                        Icon(
-                            modifier = Modifier
-                                .size(height = 28.dp, width = 28.dp),
-                            bitmap = it,
-                            contentDescription = "Play Store",
-                            tint = Color.White
-                        )
-                    }
+                Icon(
+                    modifier = Modifier
+                        .size(height = 28.dp, width = 28.dp),
+                    painter = painterResource(id = R.drawable.ic_icons8_google_play),
+                    contentDescription = "Play Store",
+                    tint = Color.White
+                )
             }
 
             IconButton(
@@ -76,7 +71,7 @@ fun AppsHeader(modifier: Modifier = Modifier) {
                         bottom.linkTo(parent.bottom)
                         end.linkTo(parent.end)
                     },
-                onClick = { /*TODO*/ }
+                onClick = onSettingsClick
             ) {
                 Icon(
                     modifier = Modifier
