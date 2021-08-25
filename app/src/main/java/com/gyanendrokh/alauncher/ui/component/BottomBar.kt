@@ -17,7 +17,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun BottomBar(modifier: Modifier = Modifier) {
+fun BottomBar(
+    modifier: Modifier = Modifier,
+    onAppDrawerClick: () -> Unit = {}
+) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
@@ -34,7 +37,7 @@ fun BottomBar(modifier: Modifier = Modifier) {
                     shape = RoundedCornerShape(50)
                 )
                 .padding(5.dp),
-            onClick = { /*TODO*/ }
+            onClick = onAppDrawerClick
         ) {
             Icon(
                 modifier = Modifier.fillMaxSize(),

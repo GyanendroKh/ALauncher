@@ -1,5 +1,6 @@
 package com.gyanendrokh.alauncher.ui.component.page
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -12,7 +13,10 @@ import com.gyanendrokh.alauncher.ui.component.AppsHeader
 import com.gyanendrokh.alauncher.util.openApp
 
 @Composable
-fun AppsPage(modifier: Modifier = Modifier, apps: List<AppEntity>) {
+fun AppsPage(
+    modifier: Modifier = Modifier,
+    apps: List<AppEntity>
+) {
     val context = LocalContext.current
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -26,6 +30,12 @@ fun AppsPage(modifier: Modifier = Modifier, apps: List<AppEntity>) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     top.linkTo(parent.top)
+                },
+                onSettingsClick = {
+                    Toast.makeText(context, "Opening Settings", Toast.LENGTH_SHORT).show()
+                },
+                onStoreClick = {
+                    Toast.makeText(context, "Opening Play Store", Toast.LENGTH_SHORT).show()
                 }
             )
 

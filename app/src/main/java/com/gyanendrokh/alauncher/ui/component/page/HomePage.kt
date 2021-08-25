@@ -20,7 +20,11 @@ import com.gyanendrokh.alauncher.util.openApp
 val handler = Handler(Looper.myLooper()!!)
 
 @Composable
-fun HomePage(modifier: Modifier = Modifier, apps: List<AppEntity>) {
+fun HomePage(
+    modifier: Modifier = Modifier,
+    apps: List<AppEntity>,
+    onAppDrawerClick: () -> Unit = {}
+) {
     val context = LocalContext.current
     val dateTime = remember {
         mutableStateOf(getDateTime())
@@ -70,7 +74,8 @@ fun HomePage(modifier: Modifier = Modifier, apps: List<AppEntity>) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     bottom.linkTo(parent.bottom)
-                }
+                },
+                onAppDrawerClick = onAppDrawerClick
             )
         }
     }
