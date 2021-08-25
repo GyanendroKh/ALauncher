@@ -3,6 +3,7 @@ package com.gyanendrokh.alauncher.ui.component.page
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -57,14 +58,18 @@ fun HomePage(
                 .padding(vertical = 20.dp)
                 .weight(1f)
                 .fillMaxWidth(),
-            verticalArrangement = Arrangement.SpaceAround
+            verticalArrangement = if (apps.isNotEmpty()) Arrangement.SpaceAround else Arrangement.Center
         ) {
-            apps.forEach { app ->
-                AppItem(
-                    app = app, onClick = {
-                        openApp(context = context, packageName = app.packageName)
-                    }
-                )
+            if (apps.isEmpty()) {
+                CircularProgressIndicator()
+            } else {
+                apps.forEach { app ->
+                    AppItem(
+                        app = app, onClick = {
+                            openApp(context = context, packageName = app.packageName)
+                        }
+                    )
+                }
             }
         }
 
