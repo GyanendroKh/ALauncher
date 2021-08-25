@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.gyanendrokh.alauncher.model.AppEntity
 import com.gyanendrokh.alauncher.util.queryAllPackages
 import kotlinx.coroutines.launch
+import kotlin.math.max
+import kotlin.math.min
 
 class AppsViewModel(application: Application) : AndroidViewModel(application) {
     var apps = mutableStateOf<List<AppEntity>>(ArrayList())
@@ -28,7 +30,13 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun updateFeaturedApps() {
-        val start = (Math.random() * apps.value.size - 6).toInt()
+        val start = min(
+            max(
+                (Math.random() * apps.value.size - 6).toInt(),
+                0
+            ),
+            apps.value.size - 6
+        )
 
         featuredApps.value = apps.value.subList(
             start,
