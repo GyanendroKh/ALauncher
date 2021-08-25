@@ -43,7 +43,8 @@ fun HomePage(
 
     Column(
         modifier = modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .padding(vertical = 20.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         ClockWidget(

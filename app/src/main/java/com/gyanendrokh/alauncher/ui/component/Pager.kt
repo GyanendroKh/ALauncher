@@ -1,10 +1,8 @@
 package com.gyanendrokh.alauncher.ui.component
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -29,9 +27,7 @@ fun Pager(
     val featuredApps = appsViewModel.featuredApps.value
 
     HorizontalPager(
-        modifier = modifier.padding(
-            vertical = 25.dp
-        ),
+        modifier = modifier,
         state = pagerState
     ) { page ->
         if (page == 0) {

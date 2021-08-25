@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import com.gyanendrokh.alauncher.model.AppEntity
 import com.gyanendrokh.alauncher.ui.component.AppItemList
 import com.gyanendrokh.alauncher.ui.component.AppsHeader
@@ -19,6 +20,7 @@ fun AppsPage(
 
     Column(
         modifier = modifier
+            .padding(top = 20.dp)
     ) {
         AppsHeader(
             onSettingsClick = {
