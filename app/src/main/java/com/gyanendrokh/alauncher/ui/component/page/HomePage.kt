@@ -6,12 +6,11 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -32,6 +31,9 @@ fun HomePage(
     apps: List<AppEntity>,
     onAppDrawerClick: () -> Unit = {}
 ) {
+    val path = remember { Path() }
+    var x by remember { mutableStateOf(0f) }
+    var y by remember { mutableStateOf(0f) }
     val context = LocalContext.current
     val dateTime = remember {
         mutableStateOf(getDateTime())
@@ -72,9 +74,32 @@ fun HomePage(
                     .fillMaxSize()
                     .offset(x = (-offset).dp)
                     .pointerInput(Unit) {
+                        val offsetToPx = (-offset).dp.toPx()
                         detectDragGestures(
-                            onDragStart = { }
-                        ) { _, _ -> }
+                            onDragStart = {
+                                path.apply {
+                                    reset()
+                                    moveTo(it.x + offsetToPx, it.y)
+                                }
+                                x = it.x + offsetToPx
+                                y = it.y
+                            },
+                            onDragEnd = {
+                                path.apply {
+                                    lineTo(x, y)
+                                }
+                            }
+                        ) { _, it ->
+                            path.apply {
+                                lineTo(
+                                    x,
+                                    y,
+                                    // (it.x + x) / 2, (it.y + y) / 2
+                                )
+                            }
+                            x += it.x
+                            y += it.y
+                        }
                     }
             ) {
                 Column(
@@ -102,7 +127,17 @@ fun HomePage(
             Canvas(
                 modifier = Modifier
                     .fillMaxSize()
-            ) { }
+            ) {
+                // Need this line to recompose the Canvas
+                println("Path $x $y")
+                drawPath(
+                    path = path,
+                    style = Stroke(
+                        width = 10f
+                    ),
+                    color = Color.White,
+                )
+            }
         }
 
         BottomBar(
