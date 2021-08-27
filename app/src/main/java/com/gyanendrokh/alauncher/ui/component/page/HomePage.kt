@@ -33,7 +33,7 @@ fun HomePage(
     apps: List<AppEntity>,
     onAppDrawerClick: () -> Unit = {}
 ) {
-    val paths by remember { mutableStateOf(ArrayList<Path>()) }
+    var paths by remember { mutableStateOf(ArrayList<Path>()) }
     var path by remember { mutableStateOf(Path()) }
     var boardSize by remember { mutableStateOf(IntSize(0, 0)) }
     var goneOutside by remember { mutableStateOf(false) }
@@ -42,6 +42,13 @@ fun HomePage(
     val context = LocalContext.current
     val dateTime = remember {
         mutableStateOf(getDateTime())
+    }
+
+    val cleanUpRunnable = remember {
+        Runnable {
+            paths = ArrayList()
+            path = Path()
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -85,6 +92,8 @@ fun HomePage(
                         val offsetToPx = (-offset).dp.toPx()
                         detectDragGestures(
                             onDragStart = {
+                                handler.removeCallbacks(cleanUpRunnable)
+
                                 path = Path().apply {
                                     reset()
                                     moveTo(it.x + offsetToPx, it.y)
@@ -97,6 +106,8 @@ fun HomePage(
                                     lineTo(x, y)
                                     paths.add(this)
                                 }
+
+                                handler.postDelayed(cleanUpRunnable, 1200)
                             }
                         ) { _, it ->
                             val isInside = x >= 0f && x <= boardSize.width.toFloat() &&
