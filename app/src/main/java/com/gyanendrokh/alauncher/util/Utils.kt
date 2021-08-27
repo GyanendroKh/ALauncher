@@ -5,7 +5,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.LauncherApps
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.drawable.Drawable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import com.gyanendrokh.alauncher.model.AppEntity
 import com.gyanendrokh.alauncher.viewmodel.DateTimeEntity
 import java.text.SimpleDateFormat
@@ -106,4 +112,34 @@ fun isDefaultLauncher(context: Context): Boolean {
     }
 
     return packageName == context.packageName
+}
+
+fun createBitmap(
+    paths: List<Path>,
+    width: Int,
+    height: Int,
+    brushSize: Float,
+    scaledWidth: Int,
+    scaledHeight: Int
+): Bitmap {
+    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+
+    val paint = Paint(Paint.DITHER_FLAG).apply {
+        color = Color.Black.toArgb()
+        isAntiAlias = true
+        isDither = true
+        style = Paint.Style.STROKE
+        strokeWidth = brushSize
+        strokeJoin = Paint.Join.ROUND
+        strokeCap = Paint.Cap.ROUND
+    }
+
+    canvas.drawColor(android.graphics.Color.WHITE)
+
+    paths.forEach {
+        canvas.drawPath(it, paint)
+    }
+
+    return Bitmap.createScaledBitmap(bitmap, scaledWidth, scaledHeight, false)
 }

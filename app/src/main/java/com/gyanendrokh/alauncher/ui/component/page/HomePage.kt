@@ -14,12 +14,14 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.gyanendrokh.alauncher.model.AppEntity
 import com.gyanendrokh.alauncher.ui.component.AppItem
 import com.gyanendrokh.alauncher.ui.component.BottomBar
 import com.gyanendrokh.alauncher.ui.component.ClockWidget
+import com.gyanendrokh.alauncher.util.createBitmap
 import com.gyanendrokh.alauncher.util.getDateTime
 import com.gyanendrokh.alauncher.util.openApp
 
@@ -40,12 +42,23 @@ fun HomePage(
     var x by remember { mutableStateOf(0f) }
     var y by remember { mutableStateOf(0f) }
     val context = LocalContext.current
+    val density = LocalDensity.current
     val dateTime = remember {
         mutableStateOf(getDateTime())
     }
 
     val cleanUpRunnable = remember {
         Runnable {
+            with(density) {
+                createBitmap(
+                    paths.map { it.asAndroidPath() },
+                    boardSize.width,
+                    boardSize.height,
+                    10.dp.toPx(),
+                    45.dp.toPx().toInt(),
+                    45.dp.toPx().toInt()
+                )
+            }
             paths = ArrayList()
             path = Path()
         }
