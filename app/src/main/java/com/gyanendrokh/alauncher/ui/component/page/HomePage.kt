@@ -33,8 +33,9 @@ fun HomePage(
     apps: List<AppEntity>,
     onAppDrawerClick: () -> Unit = {}
 ) {
-    val path = remember { Path() }
-    var boardSize = remember { IntSize(0, 0) }
+    val paths by remember { mutableStateOf(ArrayList<Path>()) }
+    var path by remember { mutableStateOf(Path()) }
+    var boardSize by remember { mutableStateOf(IntSize(0, 0)) }
     var goneOutside by remember { mutableStateOf(false) }
     var x by remember { mutableStateOf(0f) }
     var y by remember { mutableStateOf(0f) }
@@ -84,7 +85,7 @@ fun HomePage(
                         val offsetToPx = (-offset).dp.toPx()
                         detectDragGestures(
                             onDragStart = {
-                                path.apply {
+                                path = Path().apply {
                                     reset()
                                     moveTo(it.x + offsetToPx, it.y)
                                 }
@@ -94,6 +95,7 @@ fun HomePage(
                             onDragEnd = {
                                 path.apply {
                                     lineTo(x, y)
+                                    paths.add(this)
                                 }
                             }
                         ) { _, it ->
@@ -151,6 +153,17 @@ fun HomePage(
             ) {
                 // Need this line to recompose the Canvas
                 println("Path $x $y")
+
+                paths.forEach {
+                    drawPath(
+                        path = it,
+                        style = Stroke(
+                            width = 10f
+                        ),
+                        color = Color.White,
+                    )
+                }
+
                 drawPath(
                     path = path,
                     style = Stroke(
