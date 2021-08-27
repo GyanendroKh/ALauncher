@@ -12,7 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.*
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.gyanendrokh.alauncher.model.AppEntity
 import com.gyanendrokh.alauncher.ui.component.AppItem
@@ -32,6 +34,8 @@ fun HomePage(
     onAppDrawerClick: () -> Unit = {}
 ) {
     val path = remember { Path() }
+    var boardSize = remember { IntSize(0, 0) }
+    var goneOutside by remember { mutableStateOf(false) }
     var x by remember { mutableStateOf(0f) }
     var y by remember { mutableStateOf(0f) }
     val context = LocalContext.current
@@ -73,6 +77,9 @@ fun HomePage(
                 modifier = Modifier
                     .fillMaxSize()
                     .offset(x = (-offset).dp)
+                    .onGloballyPositioned {
+                        boardSize = it.size
+                    }
                     .pointerInput(Unit) {
                         val offsetToPx = (-offset).dp.toPx()
                         detectDragGestures(
@@ -90,13 +97,27 @@ fun HomePage(
                                 }
                             }
                         ) { _, it ->
-                            path.apply {
-                                lineTo(
-                                    x,
-                                    y,
-                                    // (it.x + x) / 2, (it.y + y) / 2
-                                )
+                            val isInside = x >= 0f && x <= boardSize.width.toFloat() &&
+                                y >= 0f && y <= boardSize.height.toFloat()
+
+                            if (isInside) {
+                                if (goneOutside) {
+                                    path.moveTo(x, y)
+                                    goneOutside = false
+                                }
+
+                                path.apply {
+                                    lineTo(
+                                        x,
+                                        y,
+                                        // (it.x + x) / 2,
+                                        // (it.y + y) / 2
+                                    )
+                                }
+                            } else {
+                                goneOutside = true
                             }
+
                             x += it.x
                             y += it.y
                         }
