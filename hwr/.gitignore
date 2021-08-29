@@ -4,6 +4,8 @@ checkpoints
 checkpoints.*
 __pycache__
 dataset/**/*.*
+!dataset/emnist/**
+!dataset/mnist/**
 !dataset/*/.gitkeep
 *.pyc
 test.py
