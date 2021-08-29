@@ -10,11 +10,12 @@ from tensorflow.keras.layers import (
 from tensorflow.keras.initializers import Constant
 from tensorflow.keras.models import Model
 
-num_classes = 10
 
-
-def create_model():
-    inputs = Input(shape=(28, 28, 1), name='input')
+def create_model(
+    input_shape,
+    num_classes: int
+):
+    inputs = Input(shape=input_shape, name='input')
 
     x = Conv2D(24, kernel_size=(6, 6), strides=1)(inputs)
     x = BatchNormalization(
@@ -56,7 +57,5 @@ def create_model():
     )(x)
 
     model = Model(inputs=inputs, outputs=predications)
-    model.compile(
-        loss='sparse_categorical_crossentropy',
-        optimizer='adam', metrics=['accuracy']
-    )
+
+    return model
