@@ -24,8 +24,6 @@ fun Pager(
         pageCount = 2,
         initialOffscreenLimit = 2
     )
-    val apps = appsViewModel.apps.value
-    val featuredApps = appsViewModel.featuredApps.value
 
     MainActivity.setOnBackPressCallback {
         if (pagerState.currentPage != 0) {
@@ -44,7 +42,7 @@ fun Pager(
     ) { page ->
         if (page == 0) {
             HomePage(
-                apps = featuredApps,
+                apps = appsViewModel.apps.value,
                 onAppDrawerClick = {
                     scope.launch {
                         pagerState.scrollToPage(1, 0f)
@@ -52,7 +50,9 @@ fun Pager(
                 }
             )
         } else {
-            AppsPage(apps = apps)
+            AppsPage(apps = appsViewModel.apps.value.filter {
+                !appsViewModel.hiddenApps.value.contains(it.packageName)
+            })
         }
     }
 }
