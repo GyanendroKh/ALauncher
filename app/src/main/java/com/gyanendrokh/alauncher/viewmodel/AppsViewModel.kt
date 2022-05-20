@@ -3,12 +3,13 @@ package com.gyanendrokh.alauncher.viewmodel
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import android.os.Handler
-import android.os.Looper
+import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import com.gyanendrokh.alauncher.model.AppEntity
 import com.gyanendrokh.alauncher.util.queryAllPackages
+import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.math.min
 
@@ -17,15 +18,16 @@ import kotlin.math.min
 class AppsViewModel(application: Application) : AndroidViewModel(application) {
     private val SHARED_PREF_NAME = "APPS"
     private val SHARED_PREF_HIDDEN_APPS = "HIDDEN_APPS"
-    private val handler = Handler(Looper.myLooper()!!)
     private val featuredAppCount = 7
     private val sharedPreferences: SharedPreferences
     var apps = mutableStateOf<List<AppEntity>>(ArrayList())
     var featuredApps = mutableStateOf<List<AppEntity>>(ArrayList())
-    var hiddenApps = mutableStateOf<MutableSet<String>>(HashSet())
+    var hiddenApps = mutableStateOf<Set<String>>(HashSet())
 
     init {
-        handler.post {
+        Toast.makeText(application, "Init", Toast.LENGTH_SHORT).show()
+
+        viewModelScope.launch {
             updateApps()
             updateFeaturedApps()
         }
@@ -55,7 +57,7 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
     fun removeHidden(apps: List<String>) {
         hiddenApps.value = HashSet<String>().apply {
             addAll(hiddenApps.value)
-            removeAll(apps)
+            removeAll(apps.toSet())
         }
 
         sharedPreferences
