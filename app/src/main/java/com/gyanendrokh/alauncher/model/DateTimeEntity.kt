@@ -1,4 +1,4 @@
-package com.gyanendrokh.alauncher.viewmodel
+package com.gyanendrokh.alauncher.model
 
 data class DateTimeEntity(
     val dateStr: String,

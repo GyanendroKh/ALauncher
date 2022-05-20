@@ -3,21 +3,26 @@ package com.gyanendrokh.alauncher.viewmodel
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.gyanendrokh.alauncher.model.AppEntity
 import com.gyanendrokh.alauncher.util.queryAllPackages
 import kotlinx.coroutines.launch
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashSet
 import kotlin.math.max
 import kotlin.math.min
 
-// TODO: Implement LiveData or RxJava2 or Flow for State
-
 class AppsViewModel(application: Application) : AndroidViewModel(application) {
-    private val SHARED_PREF_NAME = "APPS"
-    private val SHARED_PREF_HIDDEN_APPS = "HIDDEN_APPS"
+
+    companion object {
+        private const val SHARED_PREF_NAME = "APPS"
+        private const val SHARED_PREF_HIDDEN_APPS = "HIDDEN_APPS"
+    }
+
     private val featuredAppCount = 7
     private val sharedPreferences: SharedPreferences
     var apps = mutableStateOf<List<AppEntity>>(ArrayList())
@@ -25,8 +30,6 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
     var hiddenApps = mutableStateOf<Set<String>>(HashSet())
 
     init {
-        Toast.makeText(application, "Init", Toast.LENGTH_SHORT).show()
-
         viewModelScope.launch {
             updateApps()
             updateFeaturedApps()
@@ -70,7 +73,7 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
         apps.value = queryAllPackages(
             context = getApplication<Application>().applicationContext
         ).sortedBy {
-            it.label
+            it.label.lowercase()
         }
     }
 

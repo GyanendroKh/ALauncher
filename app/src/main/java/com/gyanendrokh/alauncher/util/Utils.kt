@@ -13,7 +13,7 @@ import android.graphics.drawable.Drawable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.gyanendrokh.alauncher.model.AppEntity
-import com.gyanendrokh.alauncher.viewmodel.DateTimeEntity
+import com.gyanendrokh.alauncher.model.DateTimeEntity
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Calendar

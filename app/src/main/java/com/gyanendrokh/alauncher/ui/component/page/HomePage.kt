@@ -3,15 +3,17 @@ package com.gyanendrokh.alauncher.ui.component.page
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.*
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.asAndroidPath
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.input.pointer.*
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -35,7 +37,7 @@ fun HomePage(
     apps: List<AppEntity>,
     onAppDrawerClick: () -> Unit = {}
 ) {
-    var paths by remember { mutableStateOf(ArrayList<Path>()) }
+    var paths by remember { mutableStateOf<List<Path>>(ArrayList()) }
     var path by remember { mutableStateOf(Path()) }
     var boardSize by remember { mutableStateOf(IntSize(0, 0)) }
     var goneOutside by remember { mutableStateOf(false) }
@@ -115,9 +117,13 @@ fun HomePage(
                                 y = it.y
                             },
                             onDragEnd = {
-                                path.apply {
+                                path = Path().apply {
+                                    addPath(path)
                                     lineTo(x, y)
-                                    paths.add(this)
+                                }
+                                paths = ArrayList<Path>().apply {
+                                    addAll(paths)
+                                    add(path)
                                 }
 
                                 handler.postDelayed(cleanUpRunnable, 1200)
@@ -132,7 +138,8 @@ fun HomePage(
                                     goneOutside = false
                                 }
 
-                                path.apply {
+                                path = Path().apply {
+                                    addPath(path)
                                     lineTo(
                                         x,
                                         y,
@@ -175,9 +182,6 @@ fun HomePage(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                // Need this line to recompose the Canvas
-                println("Path $x $y")
-
                 paths.forEach {
                     drawPath(
                         path = it,
