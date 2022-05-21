@@ -3,50 +3,97 @@ package com.gyanendrokh.alauncher.viewmodel
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.gyanendrokh.alauncher.model.AppEntity
 import com.gyanendrokh.alauncher.util.queryAllPackages
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashSet
-import kotlin.math.max
-import kotlin.math.min
+import kotlinx.coroutines.withContext
 
 class AppsViewModel(application: Application) : AndroidViewModel(application) {
 
     companion object {
         private const val SHARED_PREF_NAME = "APPS"
         private const val SHARED_PREF_HIDDEN_APPS = "HIDDEN_APPS"
+        const val FEATURED_APP_COUNT = 7
     }
 
-    private val featuredAppCount = 7
     private val sharedPreferences: SharedPreferences
-    var apps = mutableStateOf<List<AppEntity>>(ArrayList())
-    var featuredApps = mutableStateOf<List<AppEntity>>(ArrayList())
-    var hiddenApps = mutableStateOf<Set<String>>(HashSet())
+
+    private val _apps = MutableStateFlow<List<AppEntity>>(listOf())
+    val apps: StateFlow<List<AppEntity>> = _apps
+
+    private val _hiddenApps = MutableStateFlow<Set<String>>(setOf())
+    val hiddenApps: StateFlow<Set<String>> = _hiddenApps
+
+    private val _filteredApps = MutableStateFlow<List<AppEntity>>(listOf())
+    val filteredApps: StateFlow<List<AppEntity>> = _filteredApps
+
+    private val _featuredApps = mutableStateOf<List<AppEntity>>(listOf())
+    val featuredApps: State<List<AppEntity>> = _featuredApps
 
     init {
+        sharedPreferences = application.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE)
+        val hApps = sharedPreferences.getString(SHARED_PREF_HIDDEN_APPS, "")?.split(";")
+
         viewModelScope.launch {
-            updateApps()
-            updateFeaturedApps()
+            apps.collect {
+                _filteredApps.value = it.filter { a ->
+                    !hiddenApps.value.contains(a.packageName)
+                }
+            }
         }
 
-        sharedPreferences = application.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE)
+        viewModelScope.launch {
+            hiddenApps.collect {
+                _filteredApps.value = apps.value.filter { a ->
+                    !it.contains(a.packageName)
+                }
+            }
+        }
 
-        val hApps = sharedPreferences.getString(SHARED_PREF_HIDDEN_APPS, "")?.split(";")
+        viewModelScope.launch {
+            filteredApps.collect { f ->
+                if (f.isEmpty()) {
+                    return@collect
+                }
+
+                val idxs = HashSet<Int>()
+                var count = 0
+
+                while (true) {
+                    val idx = (Math.random() * f.size).toInt()
+
+                    if (!idxs.contains(idx)) {
+                        idxs.add(idx)
+                        count++
+                    }
+
+                    if (count == FEATURED_APP_COUNT) break
+                }
+
+                _featuredApps.value = idxs.map { f[it] }
+            }
+        }
+
+        viewModelScope.launch {
+            updateApps()
+        }
+
         if (hApps != null) {
-            hiddenApps.value = HashSet<String>().apply {
+            _hiddenApps.value = HashSet<String>().apply {
                 addAll(hApps)
             }
         }
     }
 
     fun addHidden(apps: List<String>) {
-        hiddenApps.value = HashSet<String>().apply {
+        _hiddenApps.value = HashSet<String>().apply {
             addAll(hiddenApps.value)
             addAll(apps)
         }
@@ -58,7 +105,7 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun removeHidden(apps: List<String>) {
-        hiddenApps.value = HashSet<String>().apply {
+        _hiddenApps.value = HashSet<String>().apply {
             addAll(hiddenApps.value)
             removeAll(apps.toSet())
         }
@@ -69,28 +116,11 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
             .apply()
     }
 
-    fun updateApps() {
-        apps.value = queryAllPackages(
-            context = getApplication<Application>().applicationContext
-        ).sortedBy {
-            it.label.lowercase()
+    suspend fun updateApps() {
+        withContext(Dispatchers.IO) {
+            _apps.value = queryAllPackages(context = getApplication<Application>()).sortedBy {
+                it.label.lowercase()
+            }
         }
-    }
-
-    fun updateFeaturedApps() {
-        val start = min(
-            max(
-                (Math.random() * apps.value.size - featuredAppCount).toInt(),
-                0
-            ),
-            apps.value.size - featuredAppCount
-        )
-
-        featuredApps.value = apps.value.filter {
-            !hiddenApps.value.contains(it.packageName)
-        }.subList(
-            start,
-            start + featuredAppCount
-        )
     }
 }

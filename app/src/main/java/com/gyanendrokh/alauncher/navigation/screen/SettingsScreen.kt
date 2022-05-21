@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Checkbox
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -23,12 +24,8 @@ fun SettingsScreen(
     navController: NavController,
     appsViewModel: AppsViewModel = viewModel()
 ) {
-    val apps = appsViewModel.apps.value
-    val hiddenApps = appsViewModel.hiddenApps.value
-
-    println("Settings")
-    println(apps.toString())
-    println(hiddenApps.toString())
+    val apps = appsViewModel.apps.collectAsState().value
+    val hiddenApps = appsViewModel.hiddenApps.collectAsState().value
 
     LazyColumn {
         items(apps) { app ->

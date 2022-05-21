@@ -160,7 +160,8 @@ fun HomePage(
                     modifier = Modifier
                         .fillMaxSize()
                         .offset(x = offset.dp),
-                    verticalArrangement = if (apps.isNotEmpty()) Arrangement.SpaceAround else Arrangement.Center
+                    verticalArrangement = if (apps.isNotEmpty()) Arrangement.SpaceAround else Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     if (apps.isEmpty()) {
                         CircularProgressIndicator()

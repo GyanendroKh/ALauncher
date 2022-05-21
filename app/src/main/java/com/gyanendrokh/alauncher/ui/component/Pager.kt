@@ -2,6 +2,7 @@ package com.gyanendrokh.alauncher.ui.component
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -29,13 +30,7 @@ fun Pager(
     )
 
     val featuredApps = appsViewModel.featuredApps.value
-    val apps = appsViewModel.apps.value
-    val hiddenApps = appsViewModel.hiddenApps.value
-
-    println("Pager")
-    println(featuredApps.toString())
-    println(apps.toString())
-    println(hiddenApps.toString())
+    val apps = appsViewModel.filteredApps.collectAsState().value
 
     BackHandler(enabled = pagerState.currentPage != 0) {
         scope.launch {
@@ -58,9 +53,7 @@ fun Pager(
             )
         } else {
             AppsPage(
-                apps = apps.filter {
-                    !hiddenApps.contains(it.packageName)
-                },
+                apps = apps,
                 onSettingsClick = {
                     navController.navigate(Screen.Settings.route)
                 }
