@@ -2,6 +2,7 @@ package com.gyanendrokh.alauncher
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.gyanendrokh.alauncher.navigation.Navigation
@@ -13,6 +14,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
+            BackHandler {
+                // Note: To prevent app from closing
+            }
             LauncherTheme {
                 Navigation()
             }
