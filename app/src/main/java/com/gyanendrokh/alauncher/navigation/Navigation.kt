@@ -1,11 +1,12 @@
 package com.gyanendrokh.alauncher.navigation
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -13,21 +14,39 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.gyanendrokh.alauncher.navigation.screen.SettingsScreen
 import com.gyanendrokh.alauncher.ui.component.Pager
 import com.gyanendrokh.alauncher.viewmodel.AppsViewModel
+import kotlinx.coroutines.launch
 
 @ExperimentalPagerApi
 @Composable
 fun Navigation() {
-    val navController = rememberNavController().apply {
-        enableOnBackPressed(true)
-    }
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val scope = rememberCoroutineScope()
+
+    val navController = rememberNavController()
     val appsViewModel: AppsViewModel = viewModel()
     val enableBackHandler = remember {
         mutableStateOf(true)
     }
 
-    LaunchedEffect(Unit) {
-        navController.addOnDestinationChangedListener { _, destination, _ ->
+    DisposableEffect(lifecycleOwner) {
+        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
             enableBackHandler.value = !destination.route.equals("main")
+        }
+
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_START) {
+                scope.launch {
+                    appsViewModel.updateApps()
+                }
+            }
+        }
+
+        navController.addOnDestinationChangedListener(listener)
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            navController.removeOnDestinationChangedListener(listener)
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 
