@@ -10,6 +10,8 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.drawable.Drawable
+import android.net.Uri
+import android.provider.Settings
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.gyanendrokh.alauncher.model.AppEntity
@@ -77,6 +79,14 @@ fun openApp(context: Context, packageName: String) {
     context.startActivity(
         context.packageManager.getLaunchIntentForPackage(packageName)
     )
+}
+
+fun openAppSettings(context: Context, packageName: String) {
+    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+    val uri: Uri = Uri.fromParts("package", packageName, null)
+    intent.data = uri
+
+    context.startActivity(intent)
 }
 
 @SuppressLint("SimpleDateFormat")

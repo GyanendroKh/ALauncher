@@ -3,6 +3,7 @@ package com.gyanendrokh.alauncher.ui.component.page
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
@@ -26,11 +27,13 @@ import com.gyanendrokh.alauncher.ui.component.ClockWidget
 import com.gyanendrokh.alauncher.util.createBitmap
 import com.gyanendrokh.alauncher.util.getDateTime
 import com.gyanendrokh.alauncher.util.openApp
+import com.gyanendrokh.alauncher.util.openAppSettings
 
 val handler = Handler(Looper.myLooper()!!)
 
 const val offset = 50 + 20
 
+@ExperimentalFoundationApi
 @Composable
 fun HomePage(
     modifier: Modifier = Modifier,
@@ -170,8 +173,11 @@ fun HomePage(
                             AppItem(
                                 modifier = Modifier,
                                 app = app,
-                                onClick = {
+                                onPress = {
                                     openApp(context = context, packageName = app.packageName)
+                                },
+                                onLongPress = {
+                                    openAppSettings(context = context, packageName = app.packageName)
                                 }
                             )
                         }

@@ -1,6 +1,7 @@
 package com.gyanendrokh.alauncher.ui.component
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -16,6 +17,7 @@ import com.gyanendrokh.alauncher.ui.component.page.HomePage
 import com.gyanendrokh.alauncher.viewmodel.AppsViewModel
 import kotlinx.coroutines.launch
 
+@ExperimentalFoundationApi
 @ExperimentalPagerApi
 @Composable
 fun Pager(

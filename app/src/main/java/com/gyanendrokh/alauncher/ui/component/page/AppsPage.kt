@@ -17,6 +17,7 @@ import com.gyanendrokh.alauncher.model.AppEntity
 import com.gyanendrokh.alauncher.ui.component.AppItem
 import com.gyanendrokh.alauncher.ui.component.AppsHeader
 import com.gyanendrokh.alauncher.util.openApp
+import com.gyanendrokh.alauncher.util.openAppSettings
 
 @Composable
 fun AppsPage(
@@ -51,8 +52,11 @@ fun AppsPage(
                     items(apps) { app ->
                         AppItem(
                             app = app,
-                            onClick = {
+                            onPress = {
                                 openApp(context = context, it.packageName)
+                            },
+                            onLongPress = {
+                                openAppSettings(context = context, it.packageName)
                             }
                         )
                     }

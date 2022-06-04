@@ -1,7 +1,8 @@
 package com.gyanendrokh.alauncher.ui.component
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -13,16 +14,19 @@ import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
 import com.gyanendrokh.alauncher.model.AppEntity
 
+@ExperimentalFoundationApi
 @Composable
 fun AppItem(
     modifier: Modifier = Modifier,
     app: AppEntity,
-    onClick: (AppEntity) -> Unit
+    onPress: (AppEntity) -> Unit = {},
+    onLongPress: (AppEntity) -> Unit = {}
 ) {
     Row(
         modifier = modifier
-            .clickable(
-                onClick = { onClick(app) }
+            .combinedClickable(
+                onClick = { onPress(app) },
+                onLongClick = { onLongPress(app) }
             )
             .fillMaxWidth()
             .padding(vertical = 15.dp, horizontal = 20.dp),
