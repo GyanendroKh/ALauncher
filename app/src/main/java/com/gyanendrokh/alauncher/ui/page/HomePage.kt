@@ -9,10 +9,9 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.asAndroidPath
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
@@ -41,7 +40,6 @@ fun HomePage(
     var paths by remember { mutableStateOf<List<Path>>(ArrayList()) }
     var path by remember { mutableStateOf(Path()) }
     var boardSize by remember { mutableStateOf(IntSize(0, 0)) }
-    var goneOutside by remember { mutableStateOf(false) }
     var x by remember { mutableStateOf(0f) }
     var y by remember { mutableStateOf(0f) }
     val context = LocalContext.current
@@ -126,30 +124,16 @@ fun HomePage(
                                     addAll(paths)
                                     add(path)
                                 }
+                                x = 0f
+                                y = 0f
 
+                                handler.removeCallbacks(cleanUpRunnable)
                                 handler.postDelayed(cleanUpRunnable, 1200)
                             }
                         ) { _, it ->
-                            val isInside = x >= 0f && x <= boardSize.width.toFloat() &&
-                                y >= 0f && y <= boardSize.height.toFloat()
-
-                            if (isInside) {
-                                if (goneOutside) {
-                                    path.moveTo(x, y)
-                                    goneOutside = false
-                                }
-
-                                path = Path().apply {
-                                    addPath(path)
-                                    lineTo(
-                                        x,
-                                        y,
-                                        // (it.x + x) / 2,
-                                        // (it.y + y) / 2
-                                    )
-                                }
-                            } else {
-                                goneOutside = true
+                            path = Path().apply {
+                                addPath(path)
+                                lineTo(x, y)
                             }
 
                             x += it.x
@@ -175,7 +159,10 @@ fun HomePage(
                                     openApp(context = context, packageName = app.packageName)
                                 },
                                 onLongPress = {
-                                    openAppSettings(context = context, packageName = app.packageName)
+                                    openAppSettings(
+                                        context = context,
+                                        packageName = app.packageName
+                                    )
                                 }
                             )
                         }
@@ -187,23 +174,32 @@ fun HomePage(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                paths.forEach {
+                val style = Stroke(
+                    width = 18f,
+                    cap = StrokeCap.Round,
+                    join = StrokeJoin.Bevel
+                )
+
+                clipRect(
+                    top = 0f,
+                    left = 0f,
+                    right = boardSize.width.toFloat(),
+                    bottom = boardSize.height.toFloat()
+                ) {
+                    paths.forEach {
+                        drawPath(
+                            path = it,
+                            style = style,
+                            color = Color.White,
+                        )
+                    }
+
                     drawPath(
-                        path = it,
-                        style = Stroke(
-                            width = 10f
-                        ),
+                        path = path,
+                        style = style,
                         color = Color.White,
                     )
                 }
-
-                drawPath(
-                    path = path,
-                    style = Stroke(
-                        width = 10f
-                    ),
-                    color = Color.White,
-                )
             }
         }
 
