@@ -1,4 +1,4 @@
-package com.gyanendrokh.alauncher.ui.theme
+package com.gyanendrokh.alauncher.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

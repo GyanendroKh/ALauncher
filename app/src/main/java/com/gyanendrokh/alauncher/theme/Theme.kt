@@ -1,4 +1,4 @@
-package com.gyanendrokh.alauncher.ui.theme
+package com.gyanendrokh.alauncher.theme
 
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors

@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
 import com.gyanendrokh.alauncher.model.AppEntity
 
-@ExperimentalFoundationApi
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AppItem(
     modifier: Modifier = Modifier,

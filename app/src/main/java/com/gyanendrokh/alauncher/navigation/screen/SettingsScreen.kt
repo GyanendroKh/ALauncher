@@ -21,6 +21,7 @@ import com.gyanendrokh.alauncher.viewmodel.AppsViewModel
 
 @Composable
 fun SettingsScreen(
+    @Suppress("UNUSED_PARAMETER")
     navController: NavController,
     appsViewModel: AppsViewModel = viewModel()
 ) {

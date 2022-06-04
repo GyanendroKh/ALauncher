@@ -10,13 +10,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.pager.ExperimentalPagerApi
+import com.gyanendrokh.alauncher.navigation.screen.MainScreen
 import com.gyanendrokh.alauncher.navigation.screen.SettingsScreen
-import com.gyanendrokh.alauncher.ui.component.Pager
 import com.gyanendrokh.alauncher.viewmodel.AppsViewModel
 import kotlinx.coroutines.launch
 
-@ExperimentalPagerApi
 @Composable
 fun Navigation() {
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -56,10 +54,10 @@ fun Navigation() {
 
     NavHost(navController = navController, startDestination = Screen.Main.route) {
         composable(Screen.Main.route) {
-            Pager(navController = navController, appsViewModel = appsViewModel)
+            MainScreen(navController, appsViewModel)
         }
         composable(Screen.Settings.route) {
-            SettingsScreen(navController, appsViewModel = appsViewModel)
+            SettingsScreen(navController, appsViewModel)
         }
     }
 }

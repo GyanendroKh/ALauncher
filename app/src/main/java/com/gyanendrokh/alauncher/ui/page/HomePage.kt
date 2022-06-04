@@ -1,9 +1,8 @@
-package com.gyanendrokh.alauncher.ui.component.page
+package com.gyanendrokh.alauncher.ui.page
 
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
@@ -33,7 +32,6 @@ val handler = Handler(Looper.myLooper()!!)
 
 const val offset = 50 + 20
 
-@ExperimentalFoundationApi
 @Composable
 fun HomePage(
     modifier: Modifier = Modifier,
