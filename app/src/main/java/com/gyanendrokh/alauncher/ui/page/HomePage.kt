@@ -9,10 +9,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.input.pointer.pointerInput
@@ -26,9 +23,12 @@ import com.gyanendrokh.alauncher.model.AppEntity
 import com.gyanendrokh.alauncher.ui.component.AppItem
 import com.gyanendrokh.alauncher.ui.component.BottomBar
 import com.gyanendrokh.alauncher.ui.component.ClockWidget
+import com.gyanendrokh.alauncher.util.createBitmap
 import com.gyanendrokh.alauncher.util.getDateTime
 import com.gyanendrokh.alauncher.util.openApp
 import com.gyanendrokh.alauncher.util.openAppSettings
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.concurrent.fixedRateTimer
 
 const val offset = (50 + 20).toFloat()
@@ -117,6 +117,7 @@ fun GestureHandler(
     content: @Composable BoxScope.() -> Unit
 ) {
     val lifecycle = LocalLifecycleOwner.current
+    val coroutineScope = rememberCoroutineScope()
     val handler = remember { Handler(Looper.getMainLooper()) }
     var paths by remember { mutableStateOf<List<Path>>(ArrayList()) }
     var path by remember { mutableStateOf(Path()) }
@@ -126,8 +127,19 @@ fun GestureHandler(
 
     val cleanUpRunnable = remember {
         Runnable {
-            paths = ArrayList()
-            path = Path()
+            coroutineScope.launch(Dispatchers.Default) {
+                createBitmap(
+                    paths.map { it.asAndroidPath() },
+                    width = boardSize.width,
+                    height = boardSize.height,
+                    brushSize = 21f,
+                    scaledWidth = 28,
+                    scaledHeight = 28
+                )
+
+                paths = ArrayList()
+                path = Path()
+            }
         }
     }
 
@@ -154,12 +166,13 @@ fun GestureHandler(
                     detectDragGestures(
                         onDragStart = {
                             handler.removeCallbacks(cleanUpRunnable)
+                            val dx = it.x + xOffset.toPx()
 
                             path = Path().apply {
                                 reset()
-                                moveTo(it.x, it.y)
+                                moveTo(dx, it.y)
                             }
-                            x = it.x
+                            x = dx
                             y = it.y
                         },
                         onDragEnd = {
@@ -194,6 +207,7 @@ fun GestureHandler(
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
+                .offset(x = -xOffset),
         ) {
             val style = Stroke(
                 width = 21f,
