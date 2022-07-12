@@ -24,6 +24,10 @@ val_ds = normalized_dataset(tfdata_val_ds).cache().prefetch(buffer_size=AUTOTUNE
 classes = tfdata_train_ds.class_names
 num_classes = len(classes)
 
+with open('classes.txt', 'w') as f:
+    for c in classes:
+        f.write(c + '\n')
+
 IMAGE_SHAPE = (IMAGE_SIZE, IMAGE_SIZE, 1)
 
 

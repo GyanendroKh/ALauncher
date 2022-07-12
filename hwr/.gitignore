@@ -12,3 +12,4 @@ model.h5
 model.tflite
 *.pyc
 test.py
+classes.txt
