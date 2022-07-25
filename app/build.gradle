@@ -57,6 +57,9 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+    aaptOptions {
+        noCompress "tflite"
+    }
     namespace 'com.gyanendrokh.alauncher'
 }
 
@@ -78,6 +81,8 @@ dependencies {
 
     implementation "com.google.android.material:material:1.6.1"
     implementation "com.google.accompanist:accompanist-pager:0.17.0"
+
+    implementation 'org.tensorflow:tensorflow-lite:2.9.0'
 
     testImplementation "junit:junit:4.13.2"
 
