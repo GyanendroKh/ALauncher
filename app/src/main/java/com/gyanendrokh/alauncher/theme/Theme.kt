@@ -1,21 +1,25 @@
 package com.gyanendrokh.alauncher.theme
 
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-private val DarkColorPalette = darkColors(
+private val DarkColorPalette = darkColorScheme(
     primary = Purple200,
-    primaryVariant = Purple700,
+    inversePrimary = Purple700,
     secondary = Teal200,
-    background = Color.Transparent
+    background = Color.Transparent,
+    onPrimary = Color.White,
+    onBackground = Color.White,
+    onSurface = Color.White,
+    onSecondary = Color.White
 )
 
 @Composable
 fun LauncherTheme(content: @Composable () -> Unit) {
     MaterialTheme(
-        colors = DarkColorPalette,
+        colorScheme = DarkColorPalette,
         typography = Typography,
         shapes = Shapes,
         content = content
