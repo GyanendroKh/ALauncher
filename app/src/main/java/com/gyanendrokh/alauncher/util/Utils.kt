@@ -6,6 +6,7 @@ import android.content.pm.LauncherApps
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.drawable.Drawable
@@ -128,15 +129,18 @@ fun createBitmap(
     scaledWidth: Int,
     scaledHeight: Int
 ): Bitmap {
-    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val bitmap = Bitmap.createBitmap(scaledWidth, scaledHeight, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(bitmap)
 
-    val paint = Paint(Paint.DITHER_FLAG).apply {
+    val scaleMatrix = Matrix()
+    val scaleX = scaledWidth.toFloat() / width
+    val scaleY = scaledHeight.toFloat() / height
+    scaleMatrix.setScale(scaleX, scaleY)
+
+    val paint = Paint().apply {
         color = Color.Black.toArgb()
-        isAntiAlias = true
-        isDither = true
+        strokeWidth = brushSize * scaleX
         style = Paint.Style.STROKE
-        strokeWidth = brushSize
         strokeJoin = Paint.Join.ROUND
         strokeCap = Paint.Cap.ROUND
     }
@@ -144,8 +148,9 @@ fun createBitmap(
     canvas.drawColor(android.graphics.Color.WHITE)
 
     paths.forEach {
+        it.transform(scaleMatrix)
         canvas.drawPath(it, paint)
     }
 
-    return Bitmap.createScaledBitmap(bitmap, scaledWidth, scaledHeight, false)
+    return bitmap
 }
