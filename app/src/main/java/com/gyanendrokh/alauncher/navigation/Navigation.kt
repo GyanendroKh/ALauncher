@@ -7,11 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -21,12 +18,10 @@ import androidx.navigation.compose.rememberNavController
 import com.gyanendrokh.alauncher.navigation.screen.MainScreen
 import com.gyanendrokh.alauncher.navigation.screen.SettingsScreen
 import com.gyanendrokh.alauncher.viewmodel.AppsViewModel
-import kotlinx.coroutines.launch
 
 @Composable
 fun Navigation() {
     val lifecycleOwner = LocalLifecycleOwner.current
-    val scope = rememberCoroutineScope()
 
     val navController = rememberNavController()
     val appsViewModel: AppsViewModel = viewModel()
@@ -39,20 +34,10 @@ fun Navigation() {
             enableBackHandler.value = !destination.route.equals("main")
         }
 
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_START) {
-                scope.launch {
-                    appsViewModel.updateApps()
-                }
-            }
-        }
-
         navController.addOnDestinationChangedListener(listener)
-        lifecycleOwner.lifecycle.addObserver(observer)
 
         onDispose {
             navController.removeOnDestinationChangedListener(listener)
-            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 

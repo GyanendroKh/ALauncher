@@ -4,9 +4,13 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.gyanendrokh.alauncher.navigation.Screen
 import com.gyanendrokh.alauncher.ui.page.AppsPage
@@ -16,6 +20,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(navController: NavController, appsViewModel: AppsViewModel) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(
         pageCount = { 2 }
@@ -27,6 +33,23 @@ fun MainScreen(navController: NavController, appsViewModel: AppsViewModel) {
     BackHandler(enabled = pagerState.currentPage != 0) {
         scope.launch {
             pagerState.scrollToPage(0, 0f)
+        }
+    }
+
+    DisposableEffect(Unit) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                scope.launch {
+                    pagerState.scrollToPage(0, 0f)
+                    appsViewModel.updateApps()
+                }
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 

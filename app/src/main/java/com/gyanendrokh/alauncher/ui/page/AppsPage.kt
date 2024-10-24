@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
@@ -21,6 +22,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,11 +31,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.gyanendrokh.alauncher.R
 import com.gyanendrokh.alauncher.model.AppEntity
 import com.gyanendrokh.alauncher.ui.component.AppItem
 import com.gyanendrokh.alauncher.util.openApp
 import com.gyanendrokh.alauncher.util.openAppSettings
+import kotlinx.coroutines.launch
 
 @Composable
 fun AppsPage(
@@ -41,6 +48,26 @@ fun AppsPage(
     onSettingsClick: () -> Unit
 ) {
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    val scope = rememberCoroutineScope()
+    val scrollState = rememberLazyListState()
+
+    DisposableEffect(Unit) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                scope.launch {
+                    scrollState.scrollToItem(0, 0)
+                }
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     Column(
         modifier = modifier
@@ -63,7 +90,9 @@ fun AppsPage(
                     modifier = Modifier.align(Alignment.Center)
                 )
             } else {
-                LazyColumn {
+                LazyColumn(
+                    state = scrollState
+                ) {
                     items(apps) { app ->
                         AppItem(
                             app = app,
