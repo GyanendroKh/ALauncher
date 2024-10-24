@@ -23,7 +23,10 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
         const val FEATURED_APP_COUNT = 7
     }
 
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences = application.getSharedPreferences(
+        SHARED_PREF_NAME,
+        Context.MODE_PRIVATE
+    )
 
     private val _apps = MutableStateFlow<List<AppEntity>>(listOf())
     val apps: StateFlow<List<AppEntity>> = _apps
@@ -38,7 +41,6 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
     val featuredApps: State<List<AppEntity>> = _featuredApps
 
     init {
-        sharedPreferences = application.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE)
         val hApps = sharedPreferences.getString(SHARED_PREF_HIDDEN_APPS, "")?.split(";")
 
         viewModelScope.launch {
@@ -118,7 +120,7 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
 
     suspend fun updateApps() {
         withContext(Dispatchers.IO) {
-            _apps.value = queryAllPackages(context = getApplication<Application>()).sortedBy {
+            _apps.value = queryAllPackages(context = getApplication()).sortedBy {
                 it.label.lowercase()
             }
         }

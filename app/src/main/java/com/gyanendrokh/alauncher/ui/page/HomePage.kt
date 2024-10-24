@@ -4,18 +4,35 @@ import android.os.Handler
 import android.os.Looper
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.asAndroidPath
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -39,11 +56,10 @@ fun HomePage(
     apps: List<AppEntity>,
     onAppDrawerClick: () -> Unit = {}
 ) {
-    val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
     val dateTime = remember { mutableStateOf(getDateTime()) }
 
-    DisposableEffect(lifecycleOwner) {
+    DisposableEffect(Unit) {
         val fixedRateTimer = fixedRateTimer("timer", initialDelay = 0, period = 500) {
             dateTime.value = getDateTime()
         }
@@ -116,14 +132,13 @@ fun GestureHandler(
     disable: Boolean = false,
     content: @Composable BoxScope.() -> Unit
 ) {
-    val lifecycle = LocalLifecycleOwner.current
     val coroutineScope = rememberCoroutineScope()
     val handler = remember { Handler(Looper.getMainLooper()) }
     var paths by remember { mutableStateOf<List<Path>>(ArrayList()) }
     var path by remember { mutableStateOf(Path()) }
     var boardSize by remember { mutableStateOf(IntSize(0, 0)) }
-    var x by remember { mutableStateOf(0f) }
-    var y by remember { mutableStateOf(0f) }
+    var x by remember { mutableFloatStateOf(0f) }
+    var y by remember { mutableFloatStateOf(0f) }
 
     val cleanUpRunnable = remember {
         Runnable {
@@ -148,7 +163,7 @@ fun GestureHandler(
         handler.postDelayed(cleanUpRunnable, 1200)
     }
 
-    DisposableEffect(lifecycle) {
+    DisposableEffect(Unit) {
         onDispose {
             handler.removeCallbacks(cleanUpRunnable)
         }

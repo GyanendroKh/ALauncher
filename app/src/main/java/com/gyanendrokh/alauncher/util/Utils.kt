@@ -16,8 +16,9 @@ import androidx.compose.ui.graphics.toArgb
 import com.gyanendrokh.alauncher.model.AppEntity
 import com.gyanendrokh.alauncher.model.DateTimeEntity
 import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 fun createQueryIntent(): Intent {
     return Intent(Intent.ACTION_MAIN, null).apply {
@@ -34,8 +35,8 @@ fun getAppIcon(context: Context, packageName: String): Drawable? {
         val activityList =
             launcher.getActivityList(packageName, android.os.Process.myUserHandle())[0]
         drawable = activityList.getBadgedIcon(0)
-    } catch (e: Exception) {
-    } catch (e: Error) {
+    } catch (_: Exception) {
+    } catch (_: Error) {
     }
 
     if (drawable == null) {

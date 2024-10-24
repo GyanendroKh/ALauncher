@@ -1,7 +1,6 @@
 package com.gyanendrokh.alauncher.navigation.screen
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
@@ -15,7 +14,6 @@ import com.gyanendrokh.alauncher.ui.page.HomePage
 import com.gyanendrokh.alauncher.viewmodel.AppsViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(navController: NavController, appsViewModel: AppsViewModel) {
     val scope = rememberCoroutineScope()

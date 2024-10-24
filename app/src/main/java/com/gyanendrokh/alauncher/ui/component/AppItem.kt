@@ -40,7 +40,7 @@ fun AppItem(
         mutableStateOf<ImageBitmap?>(null)
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(app) {
         withContext(Dispatchers.Default) {
             bitmap = app.icon.toBitmap().asImageBitmap()
         }
