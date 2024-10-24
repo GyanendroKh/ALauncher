@@ -1,11 +1,15 @@
 package com.gyanendrokh.alauncher.navigation
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -56,7 +60,13 @@ fun Navigation() {
         navController.navigateUp()
     }
 
-    NavHost(navController = navController, startDestination = Screen.Main.route) {
+    NavHost(
+        modifier = Modifier
+            .background(Color.Black.copy(alpha = 0.15f))
+            .safeContentPadding(),
+        navController = navController,
+        startDestination = Screen.Main.route
+    ) {
         composable(Screen.Main.route) {
             MainScreen(navController, appsViewModel)
         }
