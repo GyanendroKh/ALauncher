@@ -43,6 +43,12 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
     init {
         val hApps = sharedPreferences.getString(SHARED_PREF_HIDDEN_APPS, "")?.split(";")
 
+        if (hApps != null) {
+            _hiddenApps.value = HashSet<String>().apply {
+                addAll(hApps)
+            }
+        }
+
         viewModelScope.launch {
             apps.collect {
                 _filteredApps.value = it.filter { a ->
@@ -65,13 +71,13 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
                     return@collect
                 }
 
-                val idxs = HashSet<Int>()
+                val idxs = ArrayList<Int>()
                 var count = 0
 
                 while (true) {
                     val idx = (Math.random() * f.size).toInt()
 
-                    if (!idxs.contains(idx)) {
+                    if (!idxs.contains(idx) && hApps?.contains(f[idx].packageName) != true) {
                         idxs.add(idx)
                         count++
                     }
@@ -85,12 +91,6 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
 
         viewModelScope.launch {
             updateApps()
-        }
-
-        if (hApps != null) {
-            _hiddenApps.value = HashSet<String>().apply {
-                addAll(hApps)
-            }
         }
     }
 
