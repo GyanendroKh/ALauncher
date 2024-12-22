@@ -2,7 +2,9 @@ package com.gyanendrokh.alauncher.navigation
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateOf
@@ -47,14 +49,15 @@ fun Navigation() {
 
     NavHost(
         modifier = Modifier
-            .background(Color.Black.copy(alpha = 0.15f))
-            .safeContentPadding(),
+            .background(Color.Black.copy(alpha = 0.25f))
+            .windowInsetsPadding(WindowInsets.statusBars),
         navController = navController,
         startDestination = Screen.Main.route
     ) {
         composable(Screen.Main.route) {
             MainScreen(navController, appsViewModel)
         }
+
         composable(Screen.Settings.route) {
             SettingsScreen(navController, appsViewModel)
         }
