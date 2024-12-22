@@ -6,16 +6,19 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.gyanendrokh.alauncher.navigation.Screen
 import com.gyanendrokh.alauncher.ui.page.AppsPage
 import com.gyanendrokh.alauncher.ui.page.HomePage
 import com.gyanendrokh.alauncher.viewmodel.AppsViewModel
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 @Composable
@@ -27,6 +30,16 @@ fun MainScreen(navController: NavController, appsViewModel: AppsViewModel) {
         pageCount = { 2 }
     )
 
+    val bottomApps by appsViewModel.apps.map {
+        it.filter {
+            listOf(
+                "com.google.android.dialer",
+                "com.android.chrome",
+                "com.whatsapp",
+                "com.google.android.youtube"
+            ).indexOf(it.packageName) != -1
+        }
+    }.collectAsStateWithLifecycle(emptyList())
     val featuredApps = appsViewModel.featuredApps.value
     val apps = appsViewModel.filteredApps.collectAsState().value
 
@@ -60,6 +73,7 @@ fun MainScreen(navController: NavController, appsViewModel: AppsViewModel) {
         if (page == 0) {
             HomePage(
                 apps = featuredApps,
+                bottomApps = bottomApps,
                 onAppDrawerClick = {
                     scope.launch {
                         pagerState.scrollToPage(1, 0f)

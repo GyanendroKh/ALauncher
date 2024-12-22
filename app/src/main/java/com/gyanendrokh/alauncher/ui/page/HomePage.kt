@@ -57,6 +57,7 @@ const val offset = (50 + 20).toFloat()
 fun HomePage(
     modifier: Modifier = Modifier,
     apps: List<AppEntity>,
+    bottomApps: List<AppEntity>,
     onAppDrawerClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -124,6 +125,7 @@ fun HomePage(
 
         BottomBar(
             modifier = Modifier.fillMaxWidth(),
+            apps = bottomApps,
             onAppDrawerClick = onAppDrawerClick
         )
     }
