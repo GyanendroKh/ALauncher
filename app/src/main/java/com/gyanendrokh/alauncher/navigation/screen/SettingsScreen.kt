@@ -1,7 +1,8 @@
 package com.gyanendrokh.alauncher.navigation.screen
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -19,19 +20,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.gyanendrokh.alauncher.util.openApp
 import com.gyanendrokh.alauncher.viewmodel.AppsViewModel
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SettingsScreen(
     @Suppress("UNUSED_PARAMETER")
     navController: NavController,
     appsViewModel: AppsViewModel = viewModel()
 ) {
+    val ctx = LocalContext.current
+
     val apps = appsViewModel.apps.collectAsState().value
     val hiddenApps = appsViewModel.hiddenApps.collectAsState().value
 
@@ -41,13 +47,16 @@ fun SettingsScreen(
 
             Row(
                 modifier = Modifier
-                    .clickable(
+                    .combinedClickable(
                         onClick = {
                             if (isChecked) {
                                 appsViewModel.removeHidden(listOf(app.packageName))
                             } else {
                                 appsViewModel.addHidden(listOf(app.packageName))
                             }
+                        },
+                        onLongClick = {
+                            openApp(context = ctx, app.packageName)
                         }
                     )
                     .fillMaxWidth()
