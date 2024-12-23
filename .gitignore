@@ -1,7 +1,13 @@
+.idea/*
+!.idea/.name
+!.idea/compiler.xml
+!.idea/gradle.xml
+!.idea/misc.xml
+!.idea/codeStyles
+
 *.iml
 .gradle
 /local.properties
-.idea
 .DS_Store
 /build
 /captures
