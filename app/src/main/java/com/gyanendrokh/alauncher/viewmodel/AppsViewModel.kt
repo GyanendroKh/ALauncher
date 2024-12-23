@@ -120,9 +120,11 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
 
     suspend fun updateApps() {
         withContext(Dispatchers.IO) {
-            _apps.value = queryAllPackages(context = getApplication()).sortedBy {
-                it.label.lowercase()
-            }
+            _apps.value = queryAllPackages(context = getApplication())
+                .toSet()
+                .sortedBy {
+                    it.label.lowercase()
+                }
         }
     }
 }
