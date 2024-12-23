@@ -125,7 +125,6 @@ fun createBitmap(
     paths: List<Path>,
     width: Int,
     height: Int,
-    brushSize: Float,
     scaledWidth: Int,
     scaledHeight: Int
 ): Bitmap {
@@ -138,14 +137,16 @@ fun createBitmap(
     scaleMatrix.setScale(scaleX, scaleY)
 
     val paint = Paint().apply {
-        color = Color.Black.toArgb()
-        strokeWidth = brushSize * scaleX
+        color = Color.White.toArgb()
+        strokeWidth = 2f
+        isAntiAlias = true
+        isDither = true
         style = Paint.Style.STROKE
         strokeJoin = Paint.Join.ROUND
         strokeCap = Paint.Cap.ROUND
     }
 
-    canvas.drawColor(android.graphics.Color.WHITE)
+    canvas.drawColor(android.graphics.Color.BLACK)
 
     paths.forEach {
         it.transform(scaleMatrix)

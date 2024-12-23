@@ -136,6 +136,8 @@ fun GestureHandler(
     modifier: Modifier = Modifier,
     xOffset: Dp = 0.dp,
     disable: Boolean = false,
+    scaledWidth: Int = 28,
+    scaledHeight: Int = 28,
     content: @Composable BoxScope.() -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -153,9 +155,8 @@ fun GestureHandler(
                     paths.map { it.asAndroidPath() },
                     width = boardSize.width,
                     height = boardSize.height,
-                    brushSize = 21f,
-                    scaledWidth = 28,
-                    scaledHeight = 28
+                    scaledWidth = scaledWidth,
+                    scaledHeight = scaledHeight
                 )
 
                 paths = ArrayList()
@@ -231,15 +232,15 @@ fun GestureHandler(
                 .offset(x = -xOffset),
         ) {
             val style = Stroke(
-                width = 21f,
+                width = 31f,
                 cap = StrokeCap.Round,
                 join = StrokeJoin.Round
             )
 
             clipRect(
                 top = 0f,
-                left = 0f - xOffset.toPx(),
-                right = boardSize.width.toFloat() - xOffset.toPx(),
+                left = 0f,
+                right = boardSize.width.toFloat(),
                 bottom = boardSize.height.toFloat()
             ) {
                 paths.forEach {
