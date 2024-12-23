@@ -1,7 +1,10 @@
 package com.gyanendrokh.alauncher.ui.page
 
+import android.graphics.Bitmap
+import android.os.Environment
 import android.os.Handler
 import android.os.Looper
+import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -43,12 +46,15 @@ import com.gyanendrokh.alauncher.model.AppEntity
 import com.gyanendrokh.alauncher.ui.component.AppItem
 import com.gyanendrokh.alauncher.ui.component.BottomBar
 import com.gyanendrokh.alauncher.ui.component.ClockWidget
+import com.gyanendrokh.alauncher.util.DigitClassifier
 import com.gyanendrokh.alauncher.util.createBitmap
 import com.gyanendrokh.alauncher.util.getDateTime
 import com.gyanendrokh.alauncher.util.openApp
 import com.gyanendrokh.alauncher.util.openAppSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 import kotlin.concurrent.fixedRateTimer
 
 const val offset = (50 + 20).toFloat()
@@ -61,7 +67,10 @@ fun HomePage(
     onAppDrawerClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
+
+    val coroutineScope = rememberCoroutineScope()
     val dateTime = remember { mutableStateOf(getDateTime()) }
+    var classifier: DigitClassifier? = remember { null }
 
     DisposableEffect(Unit) {
         val fixedRateTimer = fixedRateTimer("timer", initialDelay = 0, period = 500) {
@@ -70,6 +79,19 @@ fun HomePage(
 
         onDispose {
             fixedRateTimer.cancel()
+        }
+    }
+
+    DisposableEffect(Unit) {
+        coroutineScope.launch(Dispatchers.Default) {
+            classifier = DigitClassifier(context)
+        }
+
+        onDispose {
+            coroutineScope.launch(Dispatchers.Default) {
+                classifier?.close()
+                classifier = null
+            }
         }
     }
 
@@ -92,7 +114,21 @@ fun HomePage(
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-            GestureHandler(xOffset = -offset.dp, disable = apps.isEmpty()) {
+            GestureHandler(
+                xOffset = -offset.dp,
+                disable = apps.isEmpty(),
+                scaledHeight = classifier?.imageHeight ?: 28,
+                scaledWidth = classifier?.imageWidth ?: 28,
+                onDigitWritten = {
+                    coroutineScope.launch(Dispatchers.Default) {
+                        val result = classifier?.classify(it)
+
+                        coroutineScope.launch(Dispatchers.Main) {
+                            Toast.makeText(context, result, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            ) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -138,6 +174,7 @@ fun GestureHandler(
     disable: Boolean = false,
     scaledWidth: Int = 28,
     scaledHeight: Int = 28,
+    onDigitWritten: (bitmap: Bitmap) -> Unit,
     content: @Composable BoxScope.() -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -151,13 +188,26 @@ fun GestureHandler(
     val cleanUpRunnable = remember {
         Runnable {
             coroutineScope.launch(Dispatchers.Default) {
-                createBitmap(
+                val bitmap = createBitmap(
                     paths.map { it.asAndroidPath() },
                     width = boardSize.width,
                     height = boardSize.height,
                     scaledWidth = scaledWidth,
                     scaledHeight = scaledHeight
                 )
+
+                withContext(Dispatchers.IO) {
+                    val f = File(
+                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+                        "a.jpg"
+                    )
+
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, f.outputStream())
+                }
+
+                withContext(Dispatchers.Main) {
+                    onDigitWritten(bitmap)
+                }
 
                 paths = ArrayList()
                 path = Path()
