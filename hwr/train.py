@@ -8,7 +8,7 @@ import math
 
 
 BATCH_SIZE = 64
-EPOCHS = 5
+EPOCHS = 10
 AUTOTUNE = tf.data.AUTOTUNE
 
 train_ds_dir = path.join('dataset', 'train')
@@ -45,7 +45,8 @@ model.compile(
 model.fit(
     train_ds,
     validation_data=val_ds,
-    epochs=EPOCHS
+    epochs=EPOCHS,
+    callbacks=[decay_callback]
 )
 
 
